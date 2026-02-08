@@ -5,7 +5,6 @@ const isProd = process.env.NODE_ENV === 'production'
 const nextConfig: NextConfig = {
   /* config options here */
   output: 'export',
-  assetPrefix: isProd ? 'https://ijasah.github.io/agentic-ai/' : '',
   basePath: isProd ? '/agentic-ai' : '',
   typescript: {
     ignoreBuildErrors: true,
