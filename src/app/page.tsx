@@ -454,14 +454,17 @@ const Index = () => {
                               <div>
                                 <h4 className="font-semibold text-foreground">What is a "Runtime"?</h4>
                                 <p className="text-sm text-muted-foreground">The runtime is the engine that executes your agent's graph. It's the system that runs the nodes in the correct order, manages the flow of data between steps, and handles the overall execution of the workflow you've designed.</p>
+                                <p className="text-xs text-primary mt-1 italic font-medium">Example: Think of a restaurant kitchen where the "Runtime" is the head chef who manages the flow—taking the order, delegating tasks to specific cooks in the right sequence, and ensuring the final dish is served correctly.</p>
                               </div>
                               <div>
                                 <h4 className="font-semibold text-foreground">What does "Stateful" mean?</h4>
                                 <p className="text-sm text-muted-foreground">A stateful agent has **memory**. It automatically keeps track of the entire history of a task—every message, every tool used, and every result. This "state" allows the agent to make smarter decisions based on past events, not just the most recent input.</p>
+                                <p className="text-xs text-primary mt-1 italic font-medium">Example: A support bot that remembers your order number from the start of the chat. When you ask "Where is it?" later, it knows exactly which order you're referring to because it stored that context in its state.</p>
                               </div>
                               <div>
                                 <h4 className="font-semibold text-foreground">What is a "Long-Running" Agent?</h4>
                                 <p className="text-sm text-muted-foreground">Because agents are stateful, they can be paused (e.g., to wait for human approval) and resumed days later, picking up exactly where they left off. This is essential for complex workflows that aren't finished in a single, quick interaction.</p>
+                                <p className="text-xs text-primary mt-1 italic font-medium">Example: A travel booking agent that finds a flight but pauses for 48 hours to wait for your "thumbs up" email. When you finally approve, it resumes and books the stay without needing to re-search or ask for your destination again.</p>
                               </div>
                           </CardContent>
                         </Card>
