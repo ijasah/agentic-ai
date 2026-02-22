@@ -542,10 +542,6 @@ const Index = () => {
                             To work with specific LLM provider packages, you will need to install them separately. Refer to the integrations page for provider-specific installation instructions.
                         </p>
                     </div>
-
-                    <p className="text-xs text-muted-foreground text-center pt-8">
-                        LangGraph is inspired by Pregel and Apache Beam, and its interface draws inspiration from NetworkX.
-                    </p>
                  </div>
             </Section>
 
