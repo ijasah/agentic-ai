@@ -55,19 +55,24 @@ for chunk, metadata in graph.stream(
 def call_arbitrary_model(state):
     """Example node that calls an arbitrary model and streams the output"""
     # Get the stream writer to send custom data
-    writer = get_stream_writer()
+    writer = get_stream_writer()  
     # Assume you have a streaming client that yields chunks
     # Generate LLM tokens using your custom streaming client
     for chunk in your_custom_streaming_client(state["topic"]):
         # Use the writer to send custom data to the stream
-        writer({"custom_llm_chunk": chunk})
+        writer({"custom_llm_chunk": chunk})  
     return {"result": "completed"}
 
-# graph = ... (Graph is compiled with the node above)
-# Set stream_mode="custom" to receive the custom data
+graph = (
+    StateGraph(State)
+    .add_node(call_arbitrary_model)
+    # Add other nodes and edges as needed
+    .compile()
+)
+# Set stream_mode="custom" to receive the custom data in the stream
 for chunk in graph.stream(
     {"topic": "cats"},
-    stream_mode="custom",
+    stream_mode="custom",  
 ):
     # The chunk will contain the custom data streamed from the llm
     print(chunk)`
@@ -148,7 +153,7 @@ export const StreamingSimulator = () => {
         <Card className="w-full bg-muted/30 shadow-inner">
             <CardContent className="p-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-4">
-                    <h3 className="font-semibold">Graph Definition & Invocation</h3>
+                    <h3 className="font-semibold">Graph Definition &amp; Invocation</h3>
                     <CodeBlock code={codeSnippets[activeTab as keyof typeof codeSnippets]} className="h-full" />
                 </div>
                 <div className="space-y-4">

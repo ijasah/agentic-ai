@@ -202,42 +202,6 @@ const sections = [
   },
 ];
 
-const persistenceCode = `from langgraph.graph import StateGraph, START, END
-from langgraph.checkpoint.memory import MemorySaver
-from typing import Annotated
-from typing_extensions import TypedDict
-from operator import add
-
-# 1. Define the state schema
-class State(TypedDict):
-    foo: str
-    bar: Annotated[list[str], add]
-
-# 2. Define the nodes
-def node_a(state: State):
-    return {"foo": "a", "bar": ["a"]}
-
-def node_b(state: State):
-    return {"foo": "b", "bar": ["b"]}
-
-# 3. Wire the graph
-workflow = StateGraph(State)
-workflow.add_node("node_a", node_a)
-workflow.add_node("node_b", node_b)
-workflow.add_edge(START, "node_a")
-workflow.add_edge("node_a", "node_b")
-workflow.add_edge("node_b", END)
-
-# 4. Compile with a checkpointer
-# This tells LangGraph to save state automatically
-checkpointer = MemorySaver()
-graph = workflow.compile(checkpointer=checkpointer)
-
-# 5. Invoke with a thread_id
-# This creates a new, independent conversation thread
-config = {"configurable": {"thread_id": "thread-1"}}
-graph.invoke({"foo": "", "bar":[]}, config)`;
-
 const allSectionIds = sections.flatMap(s => [s.id, ...(s.subsections ? s.subsections.map(sub => sub.id) : [])]);
 
 const toolCode = `
@@ -474,7 +438,7 @@ const Index = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Card className="bg-muted/30">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-base"><FileWarning className="text-destructive"/> Task Allocation & Coordination</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-base"><FileWarning className="text-destructive"/> Task Allocation &amp; Coordination</CardTitle>
                             </CardHeader>
                             <CardContent><p className="text-sm text-muted-foreground">Efficiently dividing tasks and ensuring agents debate and reach consensus requires sophisticated protocols.</p></CardContent>
                         </Card>
@@ -587,7 +551,7 @@ const Index = () => {
 
             <Section id="thinking-in-langgraph" title="Thinking in LangGraph" icon={<Workflow className="h-8 w-8 text-primary" />}>
                 <p className="text-muted-foreground text-center mb-8">
-                    This interactive simulation walks you through the 5 core steps of building a stateful agent with LangGraph. As you open each step in the accordion, the diagram on the left will highlight the relevant parts, and a concise explanation with key insights will appear. This walkthrough makes the core concepts of nodes, state, and wiring a graph incredibly clear and easy to understand.
+                    This interactive simulation walks you through the 5 core steps of building a stateful agent with LangGraph. As you open each step in the **accordion**, the diagram on the left will highlight the relevant parts, and a concise explanation with key insights will appear. This walkthrough makes the core concepts of nodes, state, and wiring a graph incredibly clear and easy to understand.
                 </p>
                 <ThinkingInLangGraph />
             </Section>
@@ -789,7 +753,7 @@ asyncio.run(main())`
 
                 <Card className="bg-muted/40">
                   <CardHeader>
-                    <CardTitle className="text-lg">Core Concepts: Threads & Checkpoints</CardTitle>
+                    <CardTitle className="text-lg">Core Concepts: Threads &amp; Checkpoints</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 text-sm">
                       <div>
@@ -972,7 +936,7 @@ graph.update_state(config, {"foo": "a new value"})`} />
                     </div>
                     <Accordion type="single" collapsible className="w-full space-y-2">
                         <AccordionItem value="memory-store-basic" className="border-b-0">
-                            <AccordionTrigger className="p-4 bg-muted/30 hover:bg-muted/50 rounded-lg text-left">Basic Usage: Storing & Retrieving Memories</AccordionTrigger>
+                            <AccordionTrigger className="p-4 bg-muted/30 hover:bg-muted/50 rounded-lg text-left">Basic Usage: Storing &amp; Retrieving Memories</AccordionTrigger>
                             <AccordionContent className="pt-4 px-2">
                                <p className="text-sm text-muted-foreground mb-4">You can `put` memories into the store, namespaced by a user ID, and `search` for them later. This is done inside your agent's nodes.</p>
                                <CodeBlock code={`from langgraph.store.memory import InMemoryStore
@@ -1134,7 +1098,7 @@ def summarize_conversation(state: State):
                         </Card>
                          <Card className="bg-muted/30">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-base"><History className="text-primary"/> Time Travel & Debugging</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-base"><History className="text-primary"/> Time Travel &amp; Debugging</CardTitle>
                             </CardHeader>
                             <CardContent><p className="text-sm text-muted-foreground">You can load the agent's state from any previous checkpoint to debug issues or explore different execution paths.</p></CardContent>
                         </Card>
@@ -1374,7 +1338,7 @@ graph.compile(checkpointer=checkpointer)`} />
                   </div>
 
                   <div id="interrupts-patterns">
-                      <h3 className="text-xl font-semibold text-foreground mb-4">Common Patterns & Full Code Examples</h3>
+                      <h3 className="text-xl font-semibold text-foreground mb-4">Common Patterns &amp; Full Code Examples</h3>
                       <Accordion type="single" collapsible className="w-full space-y-2">
                           <AccordionItem value="approve-reject" className="border-b-0">
                               <AccordionTrigger className="p-4 bg-muted/30 hover:bg-muted/50 rounded-lg text-left">Approve or Reject Actions</AccordionTrigger>
@@ -1715,7 +1679,7 @@ async def create_profile(name: str, ctx: Context) -> str:
                 <li><a href="https://docs.langchain.com/oss/python/langgraph/thinking-in-langgraph" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Thinking in LangGraph</a></li>
                 <li><a href="https://docs.langchain.com/oss/python/langgraph/quickstart" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Quickstart</a></li>
                 <li><a href="https://docs.langchain.com/oss/python/langgraph/local-server" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Running a Local Server</a></li>
-                <li><a href="https://docs.langchain.com/oss/python/langgraph/persistence" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Persistence, Memory & Time-Travel</a></li>
+                <li><a href="https://docs.langchain.com/oss/python/langgraph/persistence" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Persistence, Memory &amp; Time-Travel</a></li>
                 <li><a href="https://docs.langchain.com/oss/python/langgraph/streaming" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Streaming</a></li>
                 <li><a href="https://docs.langchain.com/oss/python/langgraph/interrupts" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Interrupts (Human-in-the-loop)</a></li>
                 <li><a href="https://docs.langchain.com/oss/python/langchain/overview" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Official LangChain Documentation</a></li>
