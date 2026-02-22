@@ -61,19 +61,6 @@ const sections = [
     ]
   },
   { 
-    id: 'langgraph-server', 
-    title: 'Run a Local Server', 
-    icon: <Server className="w-4 h-4" />,
-    subsections: [
-        { id: 'server-install-cli', title: 'Install CLI' },
-        { id: 'server-create-app', title: 'Create App' },
-        { id: 'server-dependencies', title: 'Install Dependencies' },
-        { id: 'server-env', title: 'Configure Environment' },
-        { id: 'server-launch', title: 'Launch Server' },
-        { id: 'server-test', title: 'Test Application' },
-    ]
-  },
-  { 
     id: 'langgraph-persistence', 
     title: 'LangGraph Persistence', 
     icon: <Save className="w-4 h-4" />,
