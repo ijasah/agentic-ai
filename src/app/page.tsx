@@ -1,7 +1,7 @@
+
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Hero } from '@/components/Hero';
 import { TableOfContents } from '@/components/TableOfContents';
@@ -13,7 +13,6 @@ import { AgentFrameworks } from '@/components/AgentFrameworks';
 import { LangGraphQuickstartSimulator } from '@/components/LangGraphQuickstartSimulator';
 import { ThinkingInLangGraph } from '@/components/ThinkingInLangGraph';
 import { PersistenceSimulator } from '@/components/PersistenceSimulator';
-import { SerializationVisual } from '@/components/SerializationVisual';
 import { DurableExecutionSimulator } from '@/components/DurableExecutionSimulator';
 import { StreamingSimulator } from '@/components/StreamingSimulator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -26,8 +25,6 @@ import {
   BrainCircuit,
   ChevronUp,
   ChevronDown,
-  Puzzle,
-  BookCopy,
   Users,
   CheckCircle,
   XCircle,
@@ -36,89 +33,68 @@ import {
   Sparkles,
   Rocket,
   ArrowRight,
-  ArrowLeft,
   GitBranch,
-  Download,
   Server,
   Link as LinkIcon,
   LineChart,
-  Lightbulb,
-  Workflow,
   Save,
-  MemoryStick,
-  UserCheck,
-  History,
-  ShieldCheck,
   Database,
-  Wrench,
-  Key,
-  Lock,
-  Binary,
-  ArrowDown,
-  Layers,
+  ShieldCheck,
   Zap,
-  Shield,
-  Code,
   Radio,
-  Hand,
-  FileJson,
-  AlertTriangle,
+  UserCheck,
   ToyBrick,
+  BookCopy,
+  Workflow,
 } from 'lucide-react';
-import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CodeBlock } from '@/components/ui/code-block';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const sections = [
   { 
     id: 'introduction', 
-    title: 'LLM Agents: An Overview', 
+    title: 'What are AI Agents?', 
     icon: <Bot className="h-8 w-8 text-primary" />,
     subsections: [
         { id: 'core-components', title: 'Core Components' },
-        { id: 'tool-integration', title: 'Tool Integration' },
+        { id: 'tool-integration', title: 'Using Tools' },
     ]
   },
   { 
     id: 'react-agent', 
-    title: 'The ReAct Framework', 
+    title: 'The ReAct Method', 
     icon: <BrainCircuit className="h-8 w-8 text-primary" />,
     subsections: [
-        { id: 'react-how', title: 'How ReAct Works' },
         { id: 'react-simulation', title: 'ReAct Simulation' },
-        { id: 'react-benefits', title: 'Key Benefits' },
+        { id: 'react-benefits', title: 'Why use it?' },
     ]
   },
   { 
     id: 'multi-agent', 
-    title: 'Multi-Agent Systems', 
+    title: 'Teamwork: Multi-Agent Systems', 
     icon: <Users className="h-8 w-8 text-primary" />,
     subsections: [
-        { id: 'multi-advantages', title: 'Advantages' },
-        { id: 'multi-simulation', title: 'Collaboration Simulation' },
+        { id: 'multi-simulation', title: 'Collaboration Sim' },
         { id: 'multi-frameworks', title: 'Popular Frameworks' },
-        { id: 'multi-challenges', title: 'Challenges' },
     ]
   },
   {
     id: 'langgraph-overview',
-    title: 'LangGraph Overview',
+    title: 'Introduction to LangGraph',
     icon: <GitBranch className="h-8 w-8 text-primary" />,
     subsections: [
-        { id: 'lg-key-concepts', title: 'Key Concepts' },
+        { id: 'lg-key-concepts', title: 'The 3 Big Ideas' },
         { id: 'lg-core-benefits', title: 'Core Benefits' },
         { id: 'lg-ecosystem', title: 'Ecosystem' },
-        { id: 'lg-installation', title: 'Installation' },
     ]
   },
   {
     id: 'thinking-in-langgraph',
-    title: 'Thinking in LangGraph',
+    title: 'How to Build an Agent',
     icon: <Workflow className="h-8 w-8 text-primary" />,
   },
   { 
@@ -126,60 +102,53 @@ const sections = [
     title: 'LangGraph Quickstart', 
     icon: <Rocket className="h-8 w-8 text-primary" />,
     subsections: [
-        { id: 'qs-graph-simulation', title: 'Graph API Simulation' },
-        { id: 'qs-functional-api', title: 'Using the Functional API' },
+        { id: 'qs-graph-simulation', title: 'Building the Graph' },
+        { id: 'qs-functional-api', title: 'The Functional Way' },
     ]
   },
     { 
     id: 'langgraph-persistence', 
-    title: 'LangGraph Persistence', 
+    title: 'Memory & Persistence', 
     icon: <Save className="h-8 w-8 text-primary" />,
     subsections: [
-        { id: 'persistence-simulation', title: 'Live Simulation' },
-        { id: 'persistence-history', title: 'State History API' },
-        { id: 'persistence-memory-store', title: 'Memory Store' },
-        { id: 'persistence-context-window', title: 'Context Window Management'},
-        { id: 'persistence-capabilities', title: 'Key Capabilities' },
-        { id: 'persistence-implementation', title: 'Implementation' },
+        { id: 'persistence-simulation', title: 'Save Points (Checkpoints)' },
+        { id: 'persistence-memory-store', title: 'Long-term Memory' },
+        { id: 'persistence-context-window', title: 'Managing History'},
+        { id: 'persistence-implementation', title: 'Production Databases' },
     ]
   },
   {
     id: 'durable-execution',
-    title: 'Durable Execution',
+    title: 'Reliability: Durable Execution',
     icon: <ShieldCheck className="h-8 w-8 text-primary" />,
     subsections: [
-        { id: 'durable-what-is', title: 'What is Durability?' },
-        { id: 'durable-simulation', title: 'Interactive Simulation' },
-        { id: 'durable-modes', title: 'Durability Modes' },
+        { id: 'durable-simulation', title: 'Crash & Resume Simulation' },
     ]
   },
   { 
     id: 'streaming', 
-    title: 'Streaming in LangGraph', 
+    title: 'Live Updates: Streaming', 
     icon: <Radio className="h-8 w-8 text-primary" />,
     subsections: [
-        { id: 'streaming-modes', title: 'Stream Modes Explained' },
+        { id: 'streaming-modes', title: 'Streaming Modes' },
         { id: 'streaming-simulation', title: 'Live Simulation' },
     ]
   },
   {
     id: 'interrupts',
-    title: 'Human-in-the-loop: Interrupts',
+    title: 'Human-in-the-loop',
     icon: <UserCheck className="h-8 w-8 text-primary" />,
     subsections: [
-        { id: 'interrupts-simulation', title: 'Interactive Simulation' },
-        { id: 'interrupts-patterns', title: 'Common Patterns' },
+        { id: 'interrupts-simulation', title: 'Approval Simulation' },
     ]
   },
   {
     id: 'mcp',
-    title: 'Model Context Protocol (MCP)',
+    title: 'The Universal Adapter (MCP)',
     icon: <ToyBrick className="h-8 w-8 text-primary" />,
     subsections: [
         { id: 'mcp-what-is', title: 'What is MCP?' },
-        { id: 'mcp-simulation', title: 'Interactive Simulation' },
-        { id: 'mcp-transports', title: 'Transports' },
-        { id: 'mcp-advanced', title: 'Advanced Features' },
+        { id: 'mcp-simulation', title: 'Tool Discovery Simulation' },
     ]
   },
   {
@@ -192,14 +161,14 @@ const sections = [
 const allSectionIds = sections.flatMap(s => [s.id, ...(s.subsections ? s.subsections.map(sub => sub.id) : [])]);
 
 const toolCode = `
-# Initialize tools
-tools = load_tools([’wikipedia’, ’llm-math’], llm=llm)
+# Give your agent tools to use
+tools = [search_web, calculator]
 
-# Create agent
-agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION)
+# The agent uses these to interact with the world
+agent = create_react_agent(model, tools)
 
-# Run query
-result = agent.run("What is the average age of a cat? Multiply by 4.")
+# Query that requires a tool
+result = agent.invoke("What is 15 * 4?")
 `;
 
 const EcosystemCard = ({ title, icon, href, children }: { title: string, icon: React.ReactNode, href: string, children: React.ReactNode }) => (
@@ -220,11 +189,10 @@ const EcosystemCard = ({ title, icon, href, children }: { title: string, icon: R
 );
 
 const streamModesData = [
-  { mode: '`values`', description: 'Streams the full value of the state after each step of the graph.' },
-  { mode: '`updates`', description: 'Streams only the updates to the state after each step of the graph.' },
-  { mode: '`messages`', description: 'Streams token-by-token output from LLMs within the graph.' },
-  { mode: '`custom`', description: 'Streams any custom data that you manually emit from within your nodes.' },
-  { mode: '`debug`', description: 'Streams as much information as possible for deep debugging.' },
+  { mode: '`values`', description: 'Streams the ENTIRE memory after each step.' },
+  { mode: '`updates`', description: 'Streams only the NEW changes at each step.' },
+  { mode: '`messages`', description: 'Streams words token-by-token from the AI.' },
+  { mode: '`custom`', description: 'Streams any special data you want to send.' },
 ];
 
 
@@ -255,7 +223,7 @@ const Index = () => {
 
       setTimeout(() => {
         isScrolling.current = false;
-      }, 1000); // Prevent rapid scrolling
+      }, 1000);
     }
   };
 
@@ -318,24 +286,21 @@ const Index = () => {
           </div>
           <main className="lg:col-span-1 space-y-24">
             
-             <Section id="introduction" title="LLM Agents: An Overview" icon={<Bot className="h-8 w-8 text-primary" />}>
+             <Section id="introduction" title="AI Agents: An Overview" icon={<Bot className="h-8 w-8 text-primary" />}>
               <div className="space-y-12">
                 <p className="text-muted-foreground text-lg">
-                  LLM Agents are advanced systems that utilize Large Language Models (LLMs) as their core engine
-                  to solve complex tasks requiring reasoning, planning, memory, and the use of external tools. Unlike
-                  static applications of LLMs, agents are dynamic and capable of executing multi-step tasks by
-                  breaking them into smaller, manageable subtasks.
+                  AI Agents are more than just chatbots. While a simple chatbot just replies to you, an **Agent** can think, plan, and use tools to solve complex tasks for you.
                 </p>
                 
                 <div id="core-components">
-                    <h3 className="text-xl font-semibold mb-4 text-foreground">Core Components of an LLM Agent</h3>
+                    <h3 className="text-xl font-semibold mb-4 text-foreground">What makes an Agent?</h3>
                     <AgentCoreComponents />
                 </div>
                 
                 <div id="tool-integration" className="pt-8">
-                  <h3 className="text-xl font-semibold mb-4 text-foreground">Tool Integration</h3>
+                  <h3 className="text-xl font-semibold mb-4 text-foreground">Giving an Agent "Tools"</h3>
                    <p className="text-muted-foreground mb-4">
-                        A core part of building an agent is giving it access to tools. These are functions the agent can call to interact with the outside world, like searching the web, running calculations, or accessing a database.
+                        Tools are like the agent's hands. They allow the agent to reach out and do things like search Google, use a calculator, or send an email.
                     </p>
                   <CodeBlock code={toolCode} />
                 </div>
@@ -346,7 +311,7 @@ const Index = () => {
             <Section id="react-agent" title="The ReAct Framework" icon={<BrainCircuit className="h-8 w-8 text-primary" />}>
                <div className="space-y-12">
                  <p className="text-muted-foreground text-lg" id="react-how">
-                    A ReAct (Reasoning and Acting) Agent is an advanced framework that enables LLMs to reason through problems while interacting with external tools. It combines two essential capabilities: generating a reasoning trace and executing task-specific actions in a continuous loop.
+                    ReAct stands for **Reasoning and Acting**. It is a simple loop that agents follow: they write down what they are thinking, then they take an action, then they look at the result.
                   </p>
                   
                   <div id="react-simulation" className="pt-8">
@@ -354,190 +319,107 @@ const Index = () => {
                   </div>
 
                   <div id="react-benefits" className="pt-8">
-                    <h3 className="text-xl font-semibold mb-4 text-foreground">Key Benefits of ReAct Agents</h3>
+                    <h3 className="text-xl font-semibold mb-4 text-foreground">Why use ReAct?</h3>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <Card className="bg-muted/30">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-base"><CheckCircle className="text-primary"/> Improved Accuracy</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-base"><CheckCircle className="text-primary"/> Fewer Errors</CardTitle>
                             </CardHeader>
-                            <CardContent><p className="text-sm text-muted-foreground">Breaking problems into smaller steps reduces errors and improves reliability.</p></CardContent>
+                            <CardContent><p className="text-sm text-muted-foreground">Writing down thoughts helps the AI avoid making silly mistakes.</p></CardContent>
                         </Card>
                          <Card className="bg-muted/30">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-base"><Sparkles className="text-primary"/> Dynamic Interaction</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-base"><Sparkles className="text-primary"/> Real-world Data</CardTitle>
                             </CardHeader>
-                            <CardContent><p className="text-sm text-muted-foreground">Agents can gather additional data or clarify ambiguities during execution.</p></CardContent>
+                            <CardContent><p className="text-sm text-muted-foreground">The agent can look up real-time info instead of guessing.</p></CardContent>
                         </Card>
                          <Card className="bg-muted/30">
                             <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-base"><Rocket className="text-primary"/> Enhanced Problem Solving</CardTitle>
+                                <CardTitle className="flex items-center gap-2 text-base"><Rocket className="text-primary"/> Solves Big Tasks</CardTitle>
                             </CardHeader>
-                            <CardContent><p className="text-sm text-muted-foreground">Combines reasoning with action to solve real-world, multi-step problems.</p></CardContent>
+                            <CardContent><p className="text-sm text-muted-foreground">It breaks one big problem into many small, easy steps.</p></CardContent>
                         </Card>
                     </div>
                   </div>
                </div>
             </Section>
 
-            <Section id="multi-agent" title="Multi-Agent Systems" icon={<Users className="h-8 w-8 text-primary" />}>
+            <Section id="multi-agent" title="Teamwork: Multi-Agent Systems" icon={<Users className="h-8 w-8 text-primary" />}>
               <div className="space-y-12">
                   <p className="text-muted-foreground text-lg">
-                    Multi-agent LLM systems consist of multiple agents that collaborate to solve complex tasks. While single-agent systems are effective for independent cognitive tasks, multi-agent systems shine in scenarios requiring teamwork, extended context management, and dynamic interaction.
+                    Sometimes, one agent isn't enough. In a **Multi-Agent System**, several agents work together like a team in an office. One agent might be a "Researcher," while another is a "Writer."
                   </p>
-
-                   <div id="multi-advantages" className="pt-8">
-                        <h3 className="text-xl font-semibold mb-4 text-foreground">Single Agent vs. Multi-Agent</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <Card className="border-red-500/30 bg-red-500/10">
-                                <CardHeader>
-                                <CardTitle className="text-red-400 flex items-center gap-2"><Bot /> Single Agent</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2">
-                                    <p className="flex items-start gap-2 text-sm"><XCircle className="w-5 h-5 mt-0.5 shrink-0"/> Prone to hallucinations without verification.</p>
-                                    <p className="flex items-start gap-2 text-sm"><XCircle className="w-5 h-5 mt-0.5 shrink-0"/> Limited by context window for long tasks.</p>
-                                    <p className="flex items-start gap-2 text-sm"><XCircle className="w-5 h-5 mt-0.5 shrink-0"/> Operates sequentially, can be slow.</p>
-                                </CardContent>
-                            </Card>
-                            <Card className="border-green-500/30 bg-green-500/10">
-                                <CardHeader>
-                                <CardTitle className="text-green-400 flex items-center gap-2"><Users/> Multi-Agent</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-2">
-                                    <p className="flex items-start gap-2 text-sm"><CheckCircle className="w-5 h-5 mt-0.5 shrink-0"/> Agents can debate and verify each other's work.</p>
-                                    <p className="flex items-start gap-2 text-sm"><CheckCircle className="w-5 h-5 mt-0.5 shrink-0"/> Tasks can be divided to handle large contexts.</p>
-                                    <p className="flex items-start gap-2 text-sm"><CheckCircle className="w-5 h-5 mt-0.5 shrink-0"/> Enables parallel processing for better efficiency.</p>
-                                </CardContent>
-                            </Card>
-                        </div>
-                   </div>
 
                   <div id="multi-simulation" className="pt-8">
                       <MultiAgentSimulator />
                   </div>
                   
                   <div id="multi-frameworks" className="pt-8">
-                     <h3 className="text-xl font-semibold mb-4 text-foreground">Popular Multi-Agent Frameworks</h3>
+                     <h3 className="text-xl font-semibold mb-4 text-foreground">Popular Agent Frameworks</h3>
                      <AgentFrameworks />
-                  </div>
-
-                  <div id="multi-challenges" className="pt-8">
-                     <h3 className="text-xl font-semibold mb-4 text-foreground">Challenges and Limitations</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Card className="bg-muted/30">
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-base"><FileWarning className="text-destructive"/> Task Allocation &amp; Coordination</CardTitle>
-                            </CardHeader>
-                            <CardContent><p className="text-sm text-muted-foreground">Efficiently dividing tasks and ensuring agents debate and reach consensus requires sophisticated protocols.</p></CardContent>
-                        </Card>
-                         <Card className="bg-muted/30">
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2 text-base"><Clock className="text-destructive"/> Time and Cost</CardTitle>
-                            </CardHeader>
-                            <CardContent><p className="text-sm text-muted-foreground">Multi-agent setups demand higher computational resources, leading to increased latency and expenses.</p></CardContent>
-                        </Card>
-                    </div>
                   </div>
               </div>
             </Section>
 
-            <Section id="langgraph-overview" title="LangGraph Overview" icon={<GitBranch className="h-8 w-8 text-primary" />}>
+            <Section id="langgraph-overview" title="What is LangGraph?" icon={<GitBranch className="h-8 w-8 text-primary" />}>
                  <div className="space-y-6">
                     <p className="text-muted-foreground text-lg">
-                        LangGraph is a powerful library for building agents that can reliably handle complex tasks. It gives you full control by letting you define an agent's workflow as a graph—a series of connected steps. Before building, it's helpful to understand a few core ideas.
+                        LangGraph is a library that helps you build reliable agents. It lets you draw a "map" (a graph) of how your agent should work.
                     </p>
                     <div id="lg-key-concepts">
                         <Card className="bg-muted/40 mb-8">
                           <CardHeader>
-                            <CardTitle>Key Concepts Explained</CardTitle>
+                            <CardTitle>The 3 Big Ideas</CardTitle>
                           </CardHeader>
                           <CardContent className="space-y-6">
                               <div>
-                                <h4 className="font-bold text-foreground flex items-center gap-2"><Zap size={18} className="text-primary"/> 1. What is a "Runtime"?</h4>
-                                <p className="text-sm text-muted-foreground mt-1">Think of the **Runtime** as the "Head Chef" or engine. It reads your map, figures out which node needs to run next, and manages the flow of information between them.</p>
+                                <h4 className="font-bold text-foreground flex items-center gap-2"><Zap size={18} className="text-primary"/> 1. The Runtime (The Engine)</h4>
+                                <p className="text-sm text-muted-foreground mt-1">Think of the **Runtime** as the engine of a car. It's the system that follows your map and moves the agent from step 1 to step 2.</p>
                               </div>
                               <div>
-                                <h4 className="font-bold text-foreground flex items-center gap-2"><Database size={18} className="text-primary"/> 2. What does "Stateful" mean?</h4>
-                                <p className="text-sm text-muted-foreground mt-1">A stateful agent has a **Shared Notebook** (memory). Every step can read previous info and write new findings. This allows the agent to learn and react based on history.</p>
+                                <h4 className="font-bold text-foreground flex items-center gap-2"><Database size={18} className="text-primary"/> 2. Stateful (The Memory)</h4>
+                                <p className="text-sm text-muted-foreground mt-1">A stateful agent has a **Shared Notebook**. Every step can read what happened before and write down new discoveries.</p>
                               </div>
                               <div>
-                                <h4 className="font-bold text-foreground flex items-center gap-2"><Clock size={18} className="text-primary"/> 3. What is a "Long-Running" Agent?</h4>
-                                <p className="text-sm text-muted-foreground mt-1">Because agents are stateful, they can **Pause**. They can wait for human approval for days, then "thaw" and pick up exactly where they left off.</p>
+                                <h4 className="font-bold text-foreground flex items-center gap-2"><Clock size={18} className="text-primary"/> 3. Long-Running (The Pause Button)</h4>
+                                <p className="text-sm text-muted-foreground mt-1">LangGraph agents can **Pause**. They can wait for a human to approve something, then "wake up" and continue exactly where they were.</p>
                               </div>
                           </CardContent>
                         </Card>
                         <CoreConceptsSimulator />
                     </div>
                      <div id="lg-core-benefits" className="space-y-4 pt-12">
-                        <h3 className="text-xl font-semibold text-foreground">Core Benefits</h3>
+                        <h3 className="text-xl font-semibold text-foreground">Why use LangGraph?</h3>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                           <Card className="bg-muted/30"><CardHeader><CardTitle className="text-base">Durable Execution</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">Build agents that persist through failures and can run for extended periods, resuming from where they left off.</p></CardContent></Card>
-                           <Card className="bg-muted/30"><CardHeader><CardTitle className="text-base">Human-in-the-loop</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">Incorporate human oversight by inspecting and modifying agent state at any point.</p></CardContent></Card>
-                           <Card className="bg-muted/30"><CardHeader><CardTitle className="text-base">Comprehensive Memory</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">Create stateful agents with both short-term working memory and long-term memory across sessions.</p></CardContent></Card>
-                           <Card className="bg-muted/30"><CardHeader><CardTitle className="text-base">Debugging with LangSmith</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">Gain deep visibility into complex agent behavior with visualization tools that trace execution paths.</p></CardContent></Card>
+                           <Card className="bg-muted/30"><CardHeader><CardTitle className="text-base">Persistence</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">If your server crashes, the agent doesn't lose its work. It resumes from the last save point.</p></CardContent></Card>
+                           <Card className="bg-muted/30"><CardHeader><CardTitle className="text-base">Human Oversight</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">You can stop the agent at any point to check its work or change its mind.</p></CardContent></Card>
+                           <Card className="bg-muted/30"><CardHeader><CardTitle className="text-base">Infinite Memory</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">Agents can remember your name and preferences across many different chats.</p></CardContent></Card>
+                           <Card className="bg-muted/30"><CardHeader><CardTitle className="text-base">Easy Debugging</CardTitle></CardHeader><CardContent><p className="text-sm text-muted-foreground">Using tools like LangSmith, you can see a perfect trace of every step the AI took.</p></CardContent></Card>
                         </div>
                     </div>
                     
                     <div id="lg-ecosystem" className="space-y-4 pt-12">
-                        <h3 className="text-xl font-semibold text-foreground">LangGraph Ecosystem</h3>
+                        <h3 className="text-xl font-semibold text-foreground">The LangChain Ecosystem</h3>
                         <div className="space-y-4">
                             <EcosystemCard title="LangSmith" icon={<LineChart />} href="http://www.langchain.com/langsmith">
-                                Trace requests, evaluate outputs, and monitor deployments in one place.
-                            </EcosystemCard>
-                             <EcosystemCard title="LangSmith Agent Server" icon={<Server />} href="https://docs.langchain.com/langsmith/agent-server">
-                                Deploy and scale agents effortlessly with a purpose-built deployment platform for long running, stateful workflows.
+                                See exactly what your AI is doing step-by-step.
                             </EcosystemCard>
                              <EcosystemCard title="LangChain" icon={<LinkIcon />} href="https://docs.langchain.com/oss/python/langchain/overview">
-                                Provides integrations and composable components to streamline LLM application development.
+                                The main library for connecting LLMs to data and tools.
                             </EcosystemCard>
                         </div>
-                    </div>
-
-                    <div id="lg-installation" className="pt-12 space-y-4">
-                        <h3 className="text-xl font-semibold text-foreground">Installation</h3>
-                        <p className="text-muted-foreground">
-                           To build powerful agents, you first need the right tools. LangGraph is the core library for creating the agent's structure.
-                        </p>
-                        <Tabs defaultValue="pip" className="w-full">
-                            <TabsList>
-                            <TabsTrigger value="pip">pip</TabsTrigger>
-                            <TabsTrigger value="uv">uv</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="pip">
-                            <CodeBlock code="pip install -U langgraph" />
-                            </TabsContent>
-                            <TabsContent value="uv">
-                            <CodeBlock code="uv add langgraph" />
-                            </TabsContent>
-                        </Tabs>
-
-                        <p className="text-muted-foreground">
-                           While LangGraph can be used on its own, it works best with the rich ecosystem of model and tool integrations provided by the main LangChain library.
-                        </p>
-                        
-                        <Tabs defaultValue="pip" className="w-full">
-                            <TabsList>
-                            <TabsTrigger value="pip">pip</TabsTrigger>
-                            <TabsTrigger value="uv">uv</TabsTrigger>
-                            </TabsList>
-                            <TabsContent value="pip">
-                            <CodeBlock code="pip install -U langchain" />
-                            </TabsContent>
-                            <TabsContent value="uv">
-                            <CodeBlock code="uv add langchain" />
-                            </TabsContent>
-                        </Tabs>
                     </div>
                  </div>
             </Section>
 
-            <Section id="thinking-in-langgraph" title="Thinking in LangGraph" icon={<Workflow className="h-8 w-8 text-primary" />}>
+            <Section id="thinking-in-langgraph" title="How to Build an Agent" icon={<Workflow className="h-8 w-8 text-primary" />}>
                 <ThinkingInLangGraph />
             </Section>
 
             <Section id="langgraph-quickstart" title="LangGraph Quickstart" icon={<Rocket className="h-8 w-8 text-primary" />}>
               <div className="space-y-6">
                 <p className="text-muted-foreground text-lg">
-                    There are two main ways to build an agent: the **Graph API** (best for visualizing logic) and the **Functional API** (best for simple, linear steps). 
+                    There are two main ways to build an agent: drawing a **Graph** (best for complex flows) or using the **Functional API** (best for simple, linear steps). 
                 </p>
 
                 <div id="qs-graph-simulation">
@@ -546,10 +428,10 @@ const Index = () => {
                 <div id="qs-functional-api">
                     <Accordion type="single" collapsible className="w-full mt-6">
                         <AccordionItem value="item-1">
-                            <AccordionTrigger className="text-lg font-semibold">Switch to: Functional API Code Example</AccordionTrigger>
+                            <AccordionTrigger className="text-lg font-semibold">Option 2: Simple Python (Functional API)</AccordionTrigger>
                             <AccordionContent>
-                                <p className="text-sm text-muted-foreground mb-4">If your agent logic is very simple and doesn't need complex loops, you can use the Functional API which looks more like standard Python.</p>
-                                <CodeBlock code={`# Functional API Example
+                                <p className="text-sm text-muted-foreground mb-4">If your agent just does one or two steps in a row, you can use the Functional API which looks like standard Python code.</p>
+                                <CodeBlock code={`# Simple Functional Agent
 from langgraph.functional import task, entrypoint
 
 @task
@@ -558,6 +440,7 @@ def call_model(messages):
 
 @entrypoint
 def my_agent(messages):
+    # Just one simple step
     response = call_model(messages).result()
     return response
 
@@ -573,168 +456,80 @@ for chunk in my_agent.stream("Hello!"):
               </div>
             </Section>
 
-            <Section id="langgraph-persistence" title="LangGraph Persistence" icon={<Save className="h-8 w-8 text-primary" />}>
+            <Section id="langgraph-persistence" title="Memory & Persistence" icon={<Save className="h-8 w-8 text-primary" />}>
               <div className="space-y-8">
                 <div>
-                    <h3 className="text-xl font-semibold text-foreground mb-2">The Superpower of Stateful Agents</h3>
+                    <h3 className="text-xl font-semibold text-foreground mb-2">The Superpower of Memory</h3>
                     <p className="text-muted-foreground">
-                        LangGraph's persistence layer is what elevates a simple workflow to a truly stateful, long-running agent. By automatically saving the agent's memory at every step, it unlocks powerful capabilities that are impossible with stateless services.
+                        LangGraph's persistence layer is what allows an agent to "save" its work. This means it can handle long conversations or complex tasks without "forgetting" what happened.
                     </p>
                 </div>
 
                 <Card className="bg-muted/40">
                   <CardHeader>
-                    <CardTitle className="text-lg">Core Concepts: Threads &amp; Checkpoints</CardTitle>
+                    <CardTitle className="text-lg">Threads & Save Points</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4 text-sm">
                       <div>
                         <h4 className="font-semibold text-foreground flex items-center gap-2"><ArrowRight className="text-primary"/>What is a Thread?</h4>
-                        <p className="text-muted-foreground pl-6">Think of a thread as a single, continuous conversation. Every time you start a new chat, you give it a unique `thread_id`. This keeps conversations separate.</p>
+                        <p className="text-muted-foreground pl-6">A thread is a single conversation. Every time you start a new chat, LangGraph creates a new `thread_id` to keep your memories organized.</p>
                       </div>
                       <div>
                         <h4 className="font-semibold text-foreground flex items-center gap-2"><ArrowRight className="text-primary"/>What is a Checkpoint?</h4>
-                        <p className="text-muted-foreground pl-6">A checkpoint is a "Save Point". LangGraph automatically saves the memory after every single step. If the agent crashes, it resumes from the last save point.</p>
+                        <p className="text-muted-foreground pl-6">A checkpoint is a **Save Point**. LangGraph saves the memory after every single step. If the AI crashes, it just restarts from the last save point.</p>
                       </div>
                   </CardContent>
                 </Card>
 
                 <div id="persistence-simulation">
-                    <h3 className="text-xl font-semibold text-foreground mb-2 text-center">Live Simulation: Visualizing Checkpoints</h3>
+                    <h3 className="text-xl font-semibold text-foreground mb-2 text-center">Live Simulation: Creating Save Points</h3>
                     <PersistenceSimulator />
                 </div>
                 
-                 <div id="persistence-history">
-                    <h3 className="text-xl font-semibold text-foreground mb-4 pt-12">Interacting with Agent History</h3>
-                     <Accordion type="single" collapsible className="w-full space-y-2">
-                        <AccordionItem value="get-state" className="border-b-0">
-                            <AccordionTrigger className="p-4 bg-muted/30 hover:bg-muted/50 rounded-lg text-left">1. Get State: View the latest snapshot</AccordionTrigger>
-                            <AccordionContent className="pt-4 px-2">
-                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                                    <div>
-                                        <p className="text-sm text-muted-foreground mb-4">You can retrieve the most recent state of any thread using `get_state`. This is useful for checking the final result of a run.</p>
-                                        <CodeBlock code={`# Get latest state
-config = {"configurable": {"thread_id": "1"}}
-latest = graph.get_state(config)`} />
-                                    </div>
-                                    <Card className="p-4 bg-background">
-                                        <div className="p-3 border-2 border-primary bg-primary/10 rounded-lg text-xs">
-                                            <p><span className="font-semibold text-foreground">values:</span> {'{\'foo\': \'b\', \'bar\': [\'a\', \'b\']}'}</p>
-                                        </div>
-                                    </Card>
-                                </div>
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem value="get-history" className="border-b-0">
-                            <AccordionTrigger className="p-4 bg-muted/30 hover:bg-muted/50 rounded-lg text-left">2. Get State History: See every step</AccordionTrigger>
-                            <AccordionContent className="pt-4 px-2">
-                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-                                    <div>
-                                        <p className="text-sm text-muted-foreground mb-4">To see the entire journey of an agent, use `get_state_history`. This returns a full list of all checkpoints.</p>
-                                        <CodeBlock code={`# List all save points
-history = list(graph.get_state_history(config))`} />
-                                    </div>
-                                    <Card className="p-4 bg-background">
-                                        <div className="space-y-2">
-                                            <div className="p-2 border rounded-lg text-xs bg-muted/50">Checkpoint 3 (latest)</div>
-                                            <div className="p-2 border rounded-lg text-xs bg-muted/50">Checkpoint 2</div>
-                                            <div className="p-2 border rounded-lg text-xs bg-muted/50">Checkpoint 1</div>
-                                        </div>
-                                    </Card>
-                                </div>
-                            </AccordionContent>
-                        </AccordionItem>
-                         <AccordionItem value="replay" className="border-b-0">
-                            <AccordionTrigger className="p-4 bg-muted/30 hover:bg-muted/50 rounded-lg text-left">3. Time Travel: Rerun from a past state</AccordionTrigger>
-                            <AccordionContent className="pt-4 px-2">
-                               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
-                                    <div>
-                                        <p className="text-sm text-muted-foreground mb-4">LangGraph's "time travel" lets you resume execution from any point in the past by invoking the graph with a specific `checkpoint_id`.</p>
-                                        <CodeBlock code={`# Re-run from specific point
-config = {"configurable": {
-    "thread_id": "1",
-    "checkpoint_id": "some_old_id"
-}}
-graph.invoke(None, config=config)`} />
-                                    </div>
-                                    <Card className="p-4 bg-background">
-                                        <div className="flex items-center justify-center">
-                                            <div className="p-2 border rounded-lg text-xs bg-muted/50">Start</div>
-                                            <div className="w-4 h-px bg-border"/>
-                                            <div className="p-2 border rounded-lg text-xs border-primary bg-primary/10">Resume here</div>
-                                        </div>
-                                    </Card>
-                                </div>
-                            </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-                 </div>
-                
                 <div id="persistence-memory-store">
-                    <h3 className="text-xl font-semibold text-foreground my-8 pt-12">The Memory Store: Long-term Memory</h3>
+                    <h3 className="text-xl font-semibold text-foreground my-8 pt-12">Long-term Memory (The Store)</h3>
                     <p className="text-muted-foreground mb-4">
-                        While Checkpoints save info for a *single chat*, the **Memory Store** allows an agent to remember things *across different chats*. This is how an agent remembers your name or preferences from yesterday.
+                        Checkpoints save info for a *single chat*. The **Memory Store** allows an agent to remember things *across different chats*. This is how an agent remembers your favorite color from a conversation you had yesterday.
                     </p>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
-                         <Card className="p-3">
-                            <CardTitle className="text-sm flex items-center gap-2"><Layers/> Thread 1 (Yesterday)</CardTitle>
-                            <CardContent className="pt-2">
-                                <p className="text-xs p-2 bg-muted rounded border">User: "I like spicy food."<br/>Agent: "Got it! (Saved to Memory Store)"</p>
-                             </CardContent>
-                         </Card>
-                         <Card className="p-3">
-                            <CardTitle className="text-sm flex items-center gap-2"><Layers/> Thread 2 (Today)</CardTitle>
-                             <CardContent className="pt-2">
-                                <p className="text-xs p-2 bg-muted rounded border">User: "Suggest a restaurant."<br/>Agent: "Since you like spicy food, try this place..."</p>
-                             </CardContent>
-                         </Card>
-                    </div>
-                    <CodeBlock code={`# Using Memory Store
+                    <CodeBlock code={`# Save user preference across all chats
 from langgraph.store.memory import InMemoryStore
 store = InMemoryStore()
 
-# Store user preference across chats
-store.put(("user_123", "prefs"), "food", {"spicy": True})`} />
+# The agent saves your preference
+store.put(("user_123", "prefs"), "favorite_color", {"color": "blue"})`} />
                 </div>
 
                 <div id="persistence-context-window">
-                    <h3 className="text-xl font-semibold text-foreground my-8 pt-12">Managing Long Conversations</h3>
+                    <h3 className="text-xl font-semibold text-foreground my-8 pt-12">Handling Long Conversations</h3>
                     <p className="text-muted-foreground mb-4">
-                        If a chat gets too long, it might confuse the AI or cost too much. Here are 3 ways to manage it:
+                        If a chat gets too long, the AI might get confused. Here are 3 ways to keep things clean:
                     </p>
                     <Accordion type="single" collapsible className="w-full space-y-2">
                         <AccordionItem value="trim-messages"  className="border-b-0">
-                            <AccordionTrigger className="p-4 bg-muted/30 hover:bg-muted/50 rounded-lg text-left">1. Trimming: Keep only the latest messages</AccordionTrigger>
+                            <AccordionTrigger className="p-4 bg-muted/30 hover:bg-muted/50 rounded-lg text-left">1. Trimming: Deleting Old Messages</AccordionTrigger>
                             <AccordionContent className="pt-4 px-2">
-                                <p className="text-sm text-muted-foreground mb-4">Automatically delete old messages so only the most recent (e.g., last 10) are sent to the AI.</p>
+                                <p className="text-sm text-muted-foreground mb-4">Only keep the most recent messages (e.g., the last 10) so the AI stays focused.</p>
                                 <CodeBlock code={`from langchain_core.messages import trim_messages
 # Keep only the last 10 messages
 trimmed = trim_messages(messages, strategy="last", max_tokens=10)`}/>
                             </AccordionContent>
                         </AccordionItem>
                         <AccordionItem value="summarize-messages"  className="border-b-0">
-                            <AccordionTrigger className="p-4 bg-muted/30 hover:bg-muted/50 rounded-lg text-left">2. Summarizing: Compress the history</AccordionTrigger>
+                            <AccordionTrigger className="p-4 bg-muted/30 hover:bg-muted/50 rounded-lg text-left">2. Summarizing: Compressing History</AccordionTrigger>
                             <AccordionContent className="pt-4 px-2">
-                                <p className="text-sm text-muted-foreground mb-4">Instead of deleting, have the AI write a summary of the old messages to save space.</p>
-                                 <CodeBlock code={`# Agent node that updates a summary
+                                <p className="text-sm text-muted-foreground mb-4">Instead of deleting, have the AI write a short summary of the old conversation to save space.</p>
+                                 <CodeBlock code={`# The agent node creates a summary of old messages
 def summarize_node(state):
-    summary = model.invoke("Summarize these messages: " + state["messages"])
+    summary = model.invoke("Summarize these: " + state["messages"])
     return {"summary": summary, "messages": [RemoveMessage(id=m.id) for m in old_msgs]}`} />
-                            </AccordionContent>
-                        </AccordionItem>
-                        <AccordionItem value="delete-messages"  className="border-b-0">
-                            <AccordionTrigger className="p-4 bg-muted/30 hover:bg-muted/50 rounded-lg text-left">3. Deleting: Manual cleanup</AccordionTrigger>
-                            <AccordionContent className="pt-4 px-2">
-                                <p className="text-sm text-muted-foreground mb-4">Manually remove specific messages from the memory using `RemoveMessage`.</p>
-                                <CodeBlock code={`from langchain_core.messages import RemoveMessage
-return {"messages": [RemoveMessage(id="msg_id_123")]}`} />
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
                 </div>
 
                  <div id="persistence-implementation">
-                    <h3 className="text-xl font-semibold text-foreground my-8 pt-12">Production Database Support</h3>
-                    <p className="text-muted-foreground mb-4">For real apps, you need a database to save these checkpoints permanently.</p>
+                    <h3 className="text-xl font-semibold text-foreground my-8 pt-12">Production Databases</h3>
+                    <p className="text-muted-foreground mb-4">For real apps, you need a database to save these memories forever.</p>
                     <Tabs defaultValue="postgres" className="w-full">
                         <TabsList className="grid w-full grid-cols-3">
                             <TabsTrigger value="postgres">Postgres</TabsTrigger>
@@ -743,7 +538,7 @@ return {"messages": [RemoveMessage(id="msg_id_123")]}`} />
                         </TabsList>
                         <TabsContent value="postgres">
                             <CodeBlock code={`from langgraph.checkpoint.postgres import PostgresSaver
-# Save to Postgres
+# Save to a Postgres database
 checkpointer = PostgresSaver.from_conn_string("postgresql://...")
 graph = builder.compile(checkpointer=checkpointer)`} />
                         </TabsContent>
@@ -762,28 +557,28 @@ checkpointer = RedisSaver.from_conn_string("redis://...")`} />
               </div>
             </Section>
 
-            <Section id="durable-execution" title="Durable Execution" icon={<ShieldCheck className="h-8 w-8 text-primary" />}>
+            <Section id="durable-execution" title="Reliability: Durable Execution" icon={<ShieldCheck className="h-8 w-8 text-primary" />}>
               <div className="space-y-8">
                 <div id="durable-what-is">
                     <p className="text-muted-foreground text-lg">
-                        **Durable execution** ensures that if your server crashes in the middle of a task, it doesn't lose progress. It can restart exactly where it left off.
+                        **Durable execution** ensures that if your server crashes in the middle of a task, the agent doesn't lose its progress. It can restart exactly where it left off.
                     </p>
                 </div>
 
                 <div id="durable-simulation">
-                    <h3 className="text-xl font-semibold text-foreground text-center">Interactive Simulation: Consistent Replay</h3>
+                    <h3 className="text-xl font-semibold text-foreground text-center">Interactive Simulation: Crash & Resume</h3>
                     <DurableExecutionSimulator />
                 </div>
               </div>
             </Section>
 
-            <Section id="streaming" title="Streaming in LangGraph" icon={<Radio className="h-8 w-8 text-primary" />}>
+            <Section id="streaming" title="Live Updates: Streaming" icon={<Radio className="h-8 w-8 text-primary" />}>
               <div className="space-y-8">
                 <p className="text-muted-foreground text-lg">
                   Streaming allows the user to see the agent's work as it happens, rather than waiting for the whole process to finish.
                 </p>
                 <div id="streaming-modes">
-                  <h3 className="text-xl font-semibold mb-4 text-foreground">Stream Modes Explained</h3>
+                  <h3 className="text-xl font-semibold mb-4 text-foreground">Streaming Modes</h3>
                    <Card>
                       <Table>
                         <TableHeader>
@@ -810,10 +605,10 @@ checkpointer = RedisSaver.from_conn_string("redis://...")`} />
               </div>
             </Section>
 
-            <Section id="interrupts" title="Human-in-the-loop: Interrupts" icon={<UserCheck className="h-8 w-8 text-primary" />}>
+            <Section id="interrupts" title="Human-in-the-loop" icon={<UserCheck className="h-8 w-8 text-primary" />}>
               <div className="space-y-8">
                   <p className="text-muted-foreground text-lg">
-                      Interrupts allow you to **Pause** the agent and wait for a human to say "Yes" or "No" before continuing. This is vital for tasks like making a payment or deleting a file.
+                      Interrupts allow you to **Pause** the agent and wait for a human to say "Approve" or "Reject" before continuing. This is vital for tasks like making a payment.
                   </p>
 
                   <div id="interrupts-simulation">
@@ -823,10 +618,10 @@ checkpointer = RedisSaver.from_conn_string("redis://...")`} />
               </div>
             </Section>
 
-            <Section id="mcp" title="Model Context Protocol (MCP)" icon={<ToyBrick className="h-8 w-8 text-primary"/>}>
+            <Section id="mcp" title="The Universal Adapter (MCP)" icon={<ToyBrick className="h-8 w-8 text-primary"/>}>
                 <div id="mcp-what-is" className='space-y-4'>
                     <p className="text-muted-foreground text-lg">
-                        Model Context Protocol (MCP) is like a **Universal Adapter** for AI. It lets you connect your agent to tools (like weather, search, or databases) without hardcoding them into the agent itself.
+                        **Model Context Protocol (MCP)** is like a universal adapter for AI. It lets you connect your agent to any data source (like weather, search, or databases) without hardcoding them.
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <Card className="bg-muted/30">
@@ -851,13 +646,16 @@ checkpointer = RedisSaver.from_conn_string("redis://...")`} />
 
             <Section id="references" title="References" icon={<BookCopy className="h-8 w-8 text-primary"/>}>
               <p className="text-muted-foreground mb-6">
-                Ready to dive deeper? Check out the official LangChain documentation.
+                Ready to dive deeper? Check out the official documentation.
               </p>
               <ul className="list-disc list-inside space-y-3">
                 <li><a href="https://docs.langchain.com/oss/python/langgraph/overview" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Official LangGraph Overview</a></li>
+                <li><a href="https://docs.langchain.com/oss/python/langchain/overview" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Official LangChain Overview</a></li>
                 <li><a href="https://docs.langchain.com/oss/python/langgraph/quickstart" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Quickstart Guide</a></li>
                 <li><a href="https://docs.langchain.com/oss/python/langgraph/persistence" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Persistence & Memory Docs</a></li>
                 <li><a href="https://docs.langchain.com/oss/python/langgraph/interrupts" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Human-in-the-loop Guide</a></li>
+                <li><a href="https://docs.langchain.com/oss/python/langgraph/streaming" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Streaming Guide</a></li>
+                <li><a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Time Travel API</a></li>
               </ul>
             </Section>
 
