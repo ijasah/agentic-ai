@@ -33,7 +33,6 @@ import {
   LineChart,
   Save,
   Database,
-  ShieldCheck,
   Zap,
   Radio,
   UserCheck,
