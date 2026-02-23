@@ -13,9 +13,7 @@ import { AgentFrameworks } from '@/components/AgentFrameworks';
 import { LangGraphQuickstartSimulator } from '@/components/LangGraphQuickstartSimulator';
 import { ThinkingInLangGraph } from '@/components/ThinkingInLangGraph';
 import { PersistenceSimulator } from '@/components/PersistenceSimulator';
-import { DurableExecutionSimulator } from '@/components/DurableExecutionSimulator';
 import { StreamingSimulator } from '@/components/StreamingSimulator';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { InterruptsSimulator } from '@/components/InterruptsSimulator';
 import { MCPSimulator } from '@/components/MCPSimulator';
 import { CoreConceptsSimulator } from '@/components/CoreConceptsSimulator';
@@ -27,9 +25,6 @@ import {
   ChevronDown,
   Users,
   CheckCircle,
-  XCircle,
-  FileWarning,
-  Clock,
   Sparkles,
   Rocket,
   ArrowRight,
@@ -46,6 +41,7 @@ import {
   ToyBrick,
   BookCopy,
   Workflow,
+  Clock,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -53,6 +49,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CodeBlock } from '@/components/ui/code-block';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const sections = [
   { 
@@ -115,14 +112,6 @@ const sections = [
         { id: 'persistence-memory-store', title: 'Long-term Memory' },
         { id: 'persistence-context-window', title: 'Managing History'},
         { id: 'persistence-implementation', title: 'Production Databases' },
-    ]
-  },
-  {
-    id: 'durable-execution',
-    title: 'Reliability: Durable Execution',
-    icon: <ShieldCheck className="h-8 w-8 text-primary" />,
-    subsections: [
-        { id: 'durable-simulation', title: 'Crash & Resume Simulation' },
     ]
   },
   { 
@@ -273,7 +262,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground font-body">
       <Hero />
       <div id="content" className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_4fr] gap-8">
@@ -367,22 +356,22 @@ const Index = () => {
                         LangGraph is a library that helps you build reliable agents. It lets you draw a "map" (a graph) of how your agent should work.
                     </p>
                     <div id="lg-key-concepts">
-                        <Card className="bg-muted/40 mb-8">
+                        <Card className="bg-muted/40 mb-8 border-2">
                           <CardHeader>
                             <CardTitle>The 3 Big Ideas</CardTitle>
                           </CardHeader>
                           <CardContent className="space-y-6">
-                              <div>
-                                <h4 className="font-bold text-foreground flex items-center gap-2"><Zap size={18} className="text-primary"/> 1. The Runtime (The Engine)</h4>
-                                <p className="text-sm text-muted-foreground mt-1">Think of the **Runtime** as the engine of a car. It's the system that follows your map and moves the agent from step 1 to step 2.</p>
+                              <div className="p-4 bg-background/50 rounded-lg border">
+                                <h4 className="font-bold text-foreground flex items-center gap-2 mb-2"><Zap size={18} className="text-primary"/> 1. The Runtime (The Engine)</h4>
+                                <p className="text-sm text-muted-foreground">Think of the **Runtime** as the engine of a car. It's the system that follows your map and moves the agent from step 1 to step 2 in the correct order.</p>
                               </div>
-                              <div>
-                                <h4 className="font-bold text-foreground flex items-center gap-2"><Database size={18} className="text-primary"/> 2. Stateful (The Memory)</h4>
-                                <p className="text-sm text-muted-foreground mt-1">A stateful agent has a **Shared Notebook**. Every step can read what happened before and write down new discoveries.</p>
+                              <div className="p-4 bg-background/50 rounded-lg border">
+                                <h4 className="font-bold text-foreground flex items-center gap-2 mb-2"><Database size={18} className="text-primary"/> 2. Stateful (The Memory)</h4>
+                                <p className="text-sm text-muted-foreground">A stateful agent has a **Shared Notebook**. Every step can read what happened before and write down new discoveries, ensuring nothing is forgotten.</p>
                               </div>
-                              <div>
-                                <h4 className="font-bold text-foreground flex items-center gap-2"><Clock size={18} className="text-primary"/> 3. Long-Running (The Pause Button)</h4>
-                                <p className="text-sm text-muted-foreground mt-1">LangGraph agents can **Pause**. They can wait for a human to approve something, then "wake up" and continue exactly where they were.</p>
+                              <div className="p-4 bg-background/50 rounded-lg border">
+                                <h4 className="font-bold text-foreground flex items-center gap-2 mb-2"><Clock size={18} className="text-primary"/> 3. Long-Running (The Pause Button)</h4>
+                                <p className="text-sm text-muted-foreground">LangGraph agents can **Pause**. They can wait for a human to approve something, then "wake up" days later and continue exactly where they were.</p>
                               </div>
                           </CardContent>
                         </Card>
@@ -553,21 +542,6 @@ checkpointer = MongoDBSaver.from_conn_string("mongodb://...")`} />
 checkpointer = RedisSaver.from_conn_string("redis://...")`} />
                         </TabsContent>
                     </Tabs>
-                </div>
-              </div>
-            </Section>
-
-            <Section id="durable-execution" title="Reliability: Durable Execution" icon={<ShieldCheck className="h-8 w-8 text-primary" />}>
-              <div className="space-y-8">
-                <div id="durable-what-is">
-                    <p className="text-muted-foreground text-lg">
-                        **Durable execution** ensures that if your server crashes in the middle of a task, the agent doesn't lose its progress. It can restart exactly where it left off.
-                    </p>
-                </div>
-
-                <div id="durable-simulation">
-                    <h3 className="text-xl font-semibold text-foreground text-center">Interactive Simulation: Crash & Resume</h3>
-                    <DurableExecutionSimulator />
                 </div>
               </div>
             </Section>
