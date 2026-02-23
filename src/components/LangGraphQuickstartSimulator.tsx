@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -61,7 +60,7 @@ const steps = [
 const CANVAS_W = 500;
 const CANVAS_H = 300;
 
-// Central coordinates for nodes
+// Nodes placed for a clean flow: START -> AGENT -> END (straight), AGENT -> TOOLS (loop)
 const NODES = {
     START: { x: 80, y: 150 },
     AGENT: { x: 250, y: 80 },
@@ -69,7 +68,7 @@ const NODES = {
     END: { x: 420, y: 150 },
 };
 
-const NodeCard = ({ x, y, label, visible, active, isAction }: { x: number, y: number, label: string, visible?: boolean, active?: boolean, isAction?: boolean }) => (
+const NodeCard = ({ x, y, label, visible, active }: { x: number, y: number, label: string, visible?: boolean, active?: boolean }) => (
     <motion.g animate={{ opacity: visible ? 1 : 0.1 }}>
         <motion.rect
             x={x - 45} y={y - 25} width="90" height="50" rx="12"
@@ -138,8 +137,8 @@ export const LangGraphQuickstartSimulator = () => {
                         <div className="relative flex-grow bg-background/80 rounded-xl border-2 border-dashed border-primary/20 shadow-inner overflow-hidden">
                             <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`}>
                                 <defs>
-                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orientation="auto">
-                                        <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" />
+                                    <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="5" refY="2" orientation="auto">
+                                        <polygon points="0 0, 6 2, 0 4" fill="currentColor" />
                                     </marker>
                                 </defs>
                                 
@@ -149,33 +148,33 @@ export const LangGraphQuickstartSimulator = () => {
                                 </pattern>
                                 <rect width="100%" height="100%" fill="url(#grid)" />
 
-                                {/* Edges (Lines) */}
-                                <g className="text-muted-foreground/30">
+                                {/* Edges (Thin, Consistent, Labeled) */}
+                                <g className="text-muted-foreground/40">
                                     {/* START -> AGENT */}
                                     <motion.path 
-                                        d={`M ${NODES.START.x + 45} ${NODES.START.y} L ${NODES.AGENT.x - 45} ${NODES.AGENT.y + 10}`} 
-                                        fill="none" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrowhead)" 
+                                        d={`M 125 150 Q 160 115 205 85`} 
+                                        fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.start_edge ? 1 : 0.2, stroke: currentStepData.execution.start_edge ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
                                     
                                     {/* AGENT -> TOOLS (Decision) */}
                                     <motion.path 
-                                        d={`M ${NODES.AGENT.x} ${NODES.AGENT.y + 25} Q ${NODES.AGENT.x - 20} ${NODES.AGENT.y + 100} ${NODES.TOOLS.x} ${NODES.TOOLS.y - 25}`} 
-                                        fill="none" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrowhead)" 
+                                        d={`M 240 105 Q 230 150 240 195`} 
+                                        fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.decision_edge ? 1 : 0.2, stroke: currentStepData.execution.tools ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
                                     
-                                    {/* TOOLS -> AGENT (Loop) */}
+                                    {/* TOOLS -> AGENT (Loop Back) */}
                                     <motion.path 
-                                        d={`M ${NODES.TOOLS.x + 45} ${NODES.TOOLS.y} Q ${NODES.TOOLS.x + 100} ${NODES.TOOLS.y - 70} ${NODES.AGENT.x + 45} ${NODES.AGENT.y + 10}`} 
-                                        fill="none" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrowhead)" 
+                                        d={`M 260 195 Q 270 150 260 105`} 
+                                        fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.loop_edge ? 1 : 0.2, stroke: currentStepData.execution.loop_edge ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
                                     
                                     {/* AGENT -> END (Decision) */}
                                     <motion.path 
-                                        d={`M ${NODES.AGENT.x + 45} ${NODES.AGENT.y + 10} L ${NODES.END.x - 45} ${NODES.END.y}`} 
-                                        fill="none" stroke="currentColor" strokeWidth="2" markerEnd="url(#arrowhead)" 
+                                        d={`M 295 85 Q 340 115 375 150`} 
+                                        fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.decision_edge ? 1 : 0.2, stroke: currentStepData.execution.end ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
                                 </g>
@@ -184,7 +183,7 @@ export const LangGraphQuickstartSimulator = () => {
                                 <g>
                                     <NodeCard x={NODES.START.x} y={NODES.START.y} label="START" visible={currentStepData.graph.start} active={currentStepData.execution.start} />
                                     <NodeCard x={NODES.AGENT.x} y={NODES.AGENT.y} label="AGENT" visible={currentStepData.graph.agent} active={currentStepData.execution.agent} />
-                                    <NodeCard x={NODES.TOOLS.x} y={NODES.TOOLS.y} label="TOOLS" visible={currentStepData.graph.tools} active={currentStepData.execution.tools} isAction />
+                                    <NodeCard x={NODES.TOOLS.x} y={NODES.TOOLS.y} label="TOOLS" visible={currentStepData.graph.tools} active={currentStepData.execution.tools} />
                                     <NodeCard x={NODES.END.x} y={NODES.END.y} label="END" visible={currentStepData.graph.decision_edge} active={currentStepData.execution.end} />
                                 </g>
                             </svg>

@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -149,17 +148,6 @@ const sections = [
 
 const allSectionIds = sections.flatMap(s => [s.id, ...(s.subsections ? s.subsections.map(sub => sub.id) : [])]);
 
-const toolCode = `
-# Give your agent tools to use
-tools = [search_web, calculator]
-
-# The agent uses these to interact with the world
-agent = create_react_agent(model, tools)
-
-# Query that requires a tool
-result = agent.invoke("What is 15 * 4?")
-`;
-
 const EcosystemCard = ({ title, icon, href, children }: { title: string, icon: React.ReactNode, href: string, children: React.ReactNode }) => (
     <a href={href} target="_blank" rel="noopener noreferrer" className="block group">
         <Card className="h-full transition-all duration-300 group-hover:border-primary group-hover:shadow-lg group-hover:-translate-y-1">
@@ -291,7 +279,14 @@ const Index = () => {
                    <p className="text-muted-foreground mb-4">
                         Tools are like the agent's hands. They allow the agent to reach out and do things like search Google, use a calculator, or send an email.
                     </p>
-                  <CodeBlock code={toolCode} />
+                  <CodeBlock code={`# Give your agent tools to use
+tools = [search_web, calculator]
+
+# The agent uses these to interact with the world
+agent = create_react_agent(model, tools)
+
+# Query that requires a tool
+result = agent.invoke("What is 15 * 4?")`} />
                 </div>
 
               </div>
