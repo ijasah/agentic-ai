@@ -181,9 +181,9 @@ agent = create_agent(
     middleware=[
         HumanInTheLoopMiddleware( 
             interrupt_on={
-                "write_file": True,  # Ask for approval, edit, or reject
-                "execute_sql": {"allowed_decisions": ["approve", "reject"]},
-                "read_data": False,  # Safe: no approval needed
+                "write_file": True,  # All decisions (approve, edit, reject) allowed
+                "execute_sql": {"allowed_decisions": ["approve", "reject"]},  # No editing allowed
+                "read_data": False, # Safe operation, no approval needed
             },
             description_prefix="Tool execution pending approval",
         ),

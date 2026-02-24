@@ -15,26 +15,26 @@ export function CodeBlock({ code, className, style }: { code: string; className?
   };
 
   return (
-    <div style={style} className={cn("relative rounded-lg bg-black/50 p-4 my-2 text-sm", className)}>
+    <div style={style} className={cn("relative rounded-lg bg-black/50 p-4 my-2 text-sm group border border-white/5", className)}>
        <TooltipProvider>
         <Tooltip>
             <TooltipTrigger asChild>
                 <Button
                     size="icon"
                     variant="ghost"
-                    className="absolute top-2 right-2 h-7 w-7 text-white/50 hover:text-white hover:bg-white/10"
+                    className="absolute top-2 right-2 h-7 w-7 text-white/30 hover:text-white hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity z-10"
                     onClick={handleCopy}
                 >
                     {copied ? <Check size={16} className="text-green-400" /> : <Copy size={16} />}
                 </Button>
             </TooltipTrigger>
             <TooltipContent>
-                <p>Copy code</p>
+                <p>{copied ? "Copied!" : "Copy code"}</p>
             </TooltipContent>
         </Tooltip>
        </TooltipProvider>
-      <pre>
-        <code className="font-mono text-white/90 whitespace-pre-wrap">
+      <pre className="overflow-x-auto scrollbar-hide">
+        <code className="font-mono text-white/90 whitespace-pre">
           {code}
         </code>
       </pre>

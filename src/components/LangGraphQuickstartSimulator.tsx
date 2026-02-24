@@ -18,57 +18,52 @@ class AgentState(TypedDict):
     messages: Annotated[list, operator.add]
     llm_calls: int
 
-# 2. Define the skills (Nodes)
+# 2. Define the nodes (Steps)
 def llm_call(state: AgentState):
-    """The AI thinks and decides what to do"""
-    return {"messages": [("ai", "I need to add 3 and 4")], "llm_calls": 1}
+    """Thinking node"""
+    return {"messages": [("ai", "Add 3+4")], "llm_calls": 1}
 
 def tool_node(state: AgentState):
-    """The agent uses a tool (like a calculator)"""
+    """Action node"""
     return {"messages": [("tool", "7")]}
 
-# 3. Build the map (The Graph)
+# 3. Build the graph
 workflow = StateGraph(AgentState)
-
 workflow.add_node("agent", llm_call)
 workflow.add_node("tools", tool_node)
 
 workflow.add_edge(START, "agent")
 workflow.add_conditional_edges(
     "agent",
-    should_continue, # Logic: tools or end?
+    should_continue, 
     {"tools": "tools", "end": END}
 )
 workflow.add_edge("tools", "agent")
 
 app = workflow.compile()
 
-# 4. Invoke the agent
-# This starts the engine!
-result = app.invoke({"messages": [("user", "What is 3 + 4?")]})
-print(result["messages"][-1])`;
+# 4. Run the agent
+result = app.invoke({"messages": [("user", "3+4?")]})`;
 
 const steps = [
-    { name: 'Ready', highlight: { start: -1, end: -1 }, explanation: 'Click "Start" to see how we build and run an AI agent graph.', graph: { start: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
-    { name: 'Define State', highlight: { start: 6, end: 9 }, explanation: 'First, we define "State"—the shared memory that keeps track of the conversation.', graph: { start: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
-    { name: 'Add Nodes', highlight: { start: 23, end: 24 }, explanation: 'Nodes are the "steps". We add an "agent" for thinking and a "tools" node for calculations.', graph: { start: true, agent: true, tools: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
-    { name: 'Connect Start', highlight: { start: 26, end: 26 }, explanation: 'We tell LangGraph to begin the journey at the "agent" node.', graph: { start: true, agent: true, tools: true, start_edge: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
-    { name: 'Decision Logic', highlight: { start: 27, end: 31 }, explanation: 'The AI decides: "Use a tool?" or "Finish?". This logic is placed on an edge.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
-    { name: 'Loop Back', highlight: { start: 32, end: 32 }, explanation: 'Crucially, after using a tool, we loop back to the agent to process the result.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
-    { name: 'The Invoke', highlight: { start: 37, end: 39 }, explanation: 'We call .invoke() to start the engine. The graph begins running from START.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { start: true }, state: { messages: [{ role: 'user', content: 'What is 3 + 4?' }], llm_calls: 0 }, trace: [{ content: 'Engine started with user query.' }] },
-    { name: 'AI Thinking', highlight: { start: 12, end: 14 }, explanation: 'The "agent" node runs. The AI realizes it needs to call the calculator tool.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { agent: true, start_edge: true }, state: { messages: [{ role: 'user', content: 'What is 3 + 4?' }], llm_calls: 1 }, trace: [{ content: 'AI: Decided to use "calculator" tool.' }] },
-    { name: 'Tool Run', highlight: { start: 16, end: 18 }, explanation: 'The "tools" node executes. It calculates 3 + 4 = 7 and updates the state.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { tools: true, decision_edge: true }, state: { messages: [{ role: 'user', content: 'What is 3 + 4?' }, { role: 'tool', content: '7' }], llm_calls: 1 }, trace: [{ content: 'Tool: Result is 7.' }] },
-    { name: 'Finish', highlight: { start: 37, end: 40 }, explanation: 'The agent sees the result, provides the final answer, and moves to END.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { end: true, agent: true, loop_edge: true }, state: { messages: [{ role: 'user', content: 'What is 3 + 4?' }, { role: 'ai', content: 'The sum is 7.' }], llm_calls: 2 }, trace: [{ content: 'AI: The sum is 7. Task complete.' }] },
+    { name: 'Ready', highlight: { start: -1, end: -1 }, explanation: 'Start to see how we build and run an AI agent graph.', graph: { start: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
+    { name: 'Imports & State', highlight: { start: 1, end: 9 }, explanation: 'First, import the tools and define "State"—the shared memory.', graph: { start: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
+    { name: 'Define Nodes', highlight: { start: 12, end: 18 }, explanation: 'Define functions for "Thinking" (agent) and "Actions" (tools).', graph: { start: true, agent: true, tools: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
+    { name: 'Add Nodes', highlight: { start: 21, end: 23 }, explanation: 'Add these skills to the graph as nodes.', graph: { start: true, agent: true, tools: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
+    { name: 'Wiring START', highlight: { start: 25, end: 25 }, explanation: 'Connect START to our agent thinking node.', graph: { start: true, agent: true, tools: true, start_edge: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
+    { name: 'Logic Edges', highlight: { start: 26, end: 30 }, explanation: 'Define logic: "Should I use tools or finish?"', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
+    { name: 'The Loop', highlight: { start: 31, end: 31 }, explanation: 'After tools are done, loop back to the agent to rethink.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: {}, state: { messages: [], llm_calls: 0 }, trace: [] },
+    { name: 'The Invoke', highlight: { start: 36, end: 37 }, explanation: 'Finally, run the agent using .invoke().', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { start: true }, state: { messages: [{ role: 'user', content: '3+4?' }], llm_calls: 0 }, trace: [{ content: 'Engine started.' }] },
+    { name: 'AI Thinking', highlight: { start: 12, end: 14 }, explanation: 'AI realizes it needs a calculator tool.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { agent: true, start_edge: true }, state: { messages: [{ role: 'user', content: '3+4?' }], llm_calls: 1 }, trace: [{ content: 'AI: Decided to call calculator.' }] },
+    { name: 'Tool Run', highlight: { start: 16, end: 18 }, explanation: 'Calculator tool runs and updates the shared memory.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { tools: true, decision_edge: true }, state: { messages: [{ role: 'user', content: '3+4?' }, { role: 'tool', content: '7' }], llm_calls: 1 }, trace: [{ content: 'Tool: Result is 7.' }] },
+    { name: 'Finish', highlight: { start: 36, end: 37 }, explanation: 'AI rethink finds no more tools needed. Move to END.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { end: true, agent: true, loop_edge: true }, state: { messages: [{ role: 'user', content: '3+4?' }, { role: 'ai', content: 'The result is 7.' }], llm_calls: 2 }, trace: [{ content: 'AI: The result is 7.' }] },
 ];
 
-const CANVAS_W = 500;
-const CANVAS_H = 300;
-
 const NODES = {
-    START: { x: 80, y: 150 },
-    AGENT: { x: 250, y: 150 },
-    TOOLS: { x: 250, y: 250 },
-    END: { x: 420, y: 150 },
+    START: { x: 80, y: 100 },
+    AGENT: { x: 250, y: 100 },
+    TOOLS: { x: 250, y: 220 },
+    END: { x: 420, y: 100 },
 };
 
 const NodeCard = ({ x, y, label, visible, active }: { x: number, y: number, label: string, visible?: boolean, active?: boolean }) => (
@@ -110,7 +105,7 @@ export const LangGraphQuickstartSimulator = () => {
         <Card className="bg-muted/30 border-2 border-primary/10 overflow-hidden shadow-inner">
             <CardHeader className="text-center bg-primary/5 pb-6 border-b">
                  <CardTitle className="text-2xl font-bold flex items-center justify-center gap-2">
-                    <Sparkles className="text-primary"/> Graph Walkthrough
+                    <Sparkles className="text-primary"/> Graph API Simulation
                  </CardTitle>
                  <CardDescription className="text-lg max-w-2xl mx-auto mt-2 h-16 flex items-center justify-center text-foreground font-medium">
                    {currentStepData.explanation}
@@ -118,7 +113,6 @@ export const LangGraphQuickstartSimulator = () => {
             </CardHeader>
             <CardContent className="p-6">
                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                    {/* Code Panel */}
                     <div className="bg-black/60 rounded-xl border border-primary/20 p-2 text-xs font-mono h-[550px] shadow-2xl overflow-hidden">
                         <ScrollArea className="h-full">
                             <pre className="p-4">
@@ -135,46 +129,40 @@ export const LangGraphQuickstartSimulator = () => {
                         </ScrollArea>
                     </div>
 
-                    {/* Visualization Panel */}
                     <div className="flex flex-col gap-6 h-[550px]">
                         <div className="relative flex-grow bg-background/80 rounded-xl border-2 border-dashed border-primary/20 shadow-inner overflow-hidden">
-                            <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 ${CANVAS_W} ${CANVAS_H}`}>
+                            <svg className="absolute inset-0 w-full h-full" viewBox={`0 0 500 300`}>
                                 <defs>
-                                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orientation="auto">
-                                        <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" />
+                                    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orientation="auto">
+                                        <polygon points="0 0, 8 3, 0 6" fill="currentColor" />
                                     </marker>
                                 </defs>
                                 
-                                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="hsl(var(--muted))" strokeWidth="0.5" opacity="0.2" />
-                                </pattern>
-                                <rect width="100%" height="100%" fill="url(#grid)" />
-
                                 <g className="text-muted-foreground/40">
-                                    {/* START -> AGENT */}
+                                    {/* START to AGENT */}
                                     <motion.line 
-                                        x1="125" y1="150" x2="200" y2="150" 
+                                        x1={NODES.START.x + 45} y1={NODES.START.y} x2={NODES.AGENT.x - 45} y2={NODES.AGENT.y} 
                                         stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.start_edge ? 1 : 0.2, stroke: currentStepData.execution.start_edge ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
                                     
-                                    {/* AGENT -> TOOLS (Down) */}
+                                    {/* AGENT to TOOLS (Down) */}
                                     <motion.line 
-                                        x1="240" y1="175" x2="240" y2="220" 
+                                        x1={NODES.AGENT.x} y1={NODES.AGENT.y + 25} x2={NODES.AGENT.x} y2={NODES.TOOLS.y - 25} 
                                         stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.decision_edge ? 1 : 0.2, stroke: currentStepData.execution.tools ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
                                     
-                                    {/* TOOLS -> AGENT (Up) */}
-                                    <motion.line 
-                                        x1="260" y1="225" x2="260" y2="180" 
-                                        stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
+                                    {/* TOOLS back to AGENT (Curve) */}
+                                    <motion.path 
+                                        d={`M ${NODES.TOOLS.x + 45},${NODES.TOOLS.y} C ${NODES.TOOLS.x + 85},${NODES.TOOLS.y} ${NODES.TOOLS.x + 85},${NODES.AGENT.y} ${NODES.AGENT.x + 45},${NODES.AGENT.y}`}
+                                        fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.loop_edge ? 1 : 0.2, stroke: currentStepData.execution.loop_edge ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
                                     
-                                    {/* AGENT -> END */}
+                                    {/* AGENT to END */}
                                     <motion.line 
-                                        x1="295" y1="150" x2="370" y2="150" 
+                                        x1={NODES.AGENT.x + 45} y1={NODES.AGENT.y} x2={NODES.END.x - 45} y2={NODES.END.y} 
                                         stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.decision_edge ? 1 : 0.2, stroke: currentStepData.execution.end ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
@@ -192,38 +180,26 @@ export const LangGraphQuickstartSimulator = () => {
                         <div className="h-48 grid grid-cols-2 gap-4">
                             <div className="bg-background/60 p-4 rounded-lg border flex flex-col shadow-inner">
                                 <h4 className="text-[10px] font-bold uppercase mb-3 flex items-center gap-2 text-primary tracking-widest">
-                                    <Info size={12}/> Console Output
+                                    <Info size={12}/> Console Trace
                                 </h4>
                                 <ScrollArea className="flex-grow">
                                     <AnimatePresence>
                                         {currentStepData.trace.map((t, i) => (
-                                            <motion.div 
-                                                key={i} 
-                                                initial={{ opacity: 0, x: -10 }} 
-                                                animate={{ opacity: 1, x: 0 }}
-                                                className="text-[11px] mb-2 p-2 bg-primary/5 rounded border-l-2 border-primary font-mono"
-                                            >
-                                                {t.content}
-                                            </motion.div>
+                                            <motion.div key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-[11px] mb-2 p-2 bg-primary/5 rounded border-l-2 border-primary font-mono">{t.content}</motion.div>
                                         ))}
                                     </AnimatePresence>
                                 </ScrollArea>
                             </div>
                             <div className="bg-background/60 p-4 rounded-lg border flex flex-col shadow-inner">
                                 <h4 className="text-[10px] font-bold uppercase mb-3 flex items-center gap-2 text-primary tracking-widest">
-                                    <Database size={12}/> Live Memory (State)
+                                    <Database size={12}/> Memory (State)
                                 </h4>
                                 <div className="text-[11px] space-y-3 font-mono">
                                     <div className="flex justify-between items-center border-b border-muted pb-1">
                                         <span className="text-muted-foreground">llm_calls:</span> 
                                         <span className="text-primary font-bold">{currentStepData.state.llm_calls}</span>
                                     </div>
-                                    <div className="pt-1">
-                                        <span className="text-muted-foreground block mb-1">messages:</span>
-                                        <div className="pl-2 border-l-2 border-muted text-[10px] text-muted-foreground/80">
-                                            {currentStepData.state.messages.length > 0 ? `[${currentStepData.state.messages.length} items]` : "[]"}
-                                        </div>
-                                    </div>
+                                    <div className="text-muted-foreground">msgs count: {currentStepData.state.messages.length}</div>
                                 </div>
                             </div>
                         </div>
@@ -231,12 +207,8 @@ export const LangGraphQuickstartSimulator = () => {
                 </div>
 
                 <div className="flex justify-center gap-4 mt-8 pt-6 border-t border-primary/10">
-                    <Button onClick={handleReset} variant="outline" disabled={step === 0} className="w-32">
-                        <RefreshCw className="mr-2 h-4 w-4"/>Reset
-                    </Button>
-                    <Button onClick={handleNext} disabled={step === steps.length - 1} className="w-48 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20">
-                        {step === 0 ? "Start Walkthrough" : "Next Step"} <ArrowRight className="ml-2 h-4 w-4"/>
-                    </Button>
+                    <Button onClick={handleReset} variant="outline" disabled={step === 0} className="w-32">Reset</Button>
+                    <Button onClick={handleNext} disabled={step === steps.length - 1} className="w-48">Next Step <ArrowRight className="ml-2 h-4 w-4"/></Button>
                 </div>
             </CardContent>
         </Card>
