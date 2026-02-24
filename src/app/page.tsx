@@ -170,6 +170,28 @@ const streamModesData = [
   { mode: '`custom`', description: 'Streams any special data you want to send.' },
 ];
 
+const hitlCode = `from langchain.agents import create_agent
+from langchain.agents.middleware import HumanInTheLoopMiddleware 
+from langgraph.checkpoint.memory import InMemorySaver 
+
+# Configure an agent that pauses for approval on sensitive tools
+agent = create_agent(
+    model="gpt-4.1",
+    tools=[write_file_tool, execute_sql_tool, read_data_tool],
+    middleware=[
+        HumanInTheLoopMiddleware( 
+            interrupt_on={
+                "write_file": True,  # Ask for approval, edit, or reject
+                "execute_sql": {"allowed_decisions": ["approve", "reject"]},
+                "read_data": False,  # Safe: no approval needed
+            },
+            description_prefix="Tool execution pending approval",
+        ),
+    ],
+    # Checkpointer stores the state so the agent can resume after approval
+    checkpointer=InMemorySaver(),  
+)`;
+
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState(sections[0].id);
@@ -550,9 +572,18 @@ checkpointer = RedisSaver.from_conn_string("redis://...")`} />
                       Interrupts allow you to **Pause** the agent and wait for a human to say "Approve" or "Reject" before continuing. This is vital for tasks like making a payment.
                   </p>
 
-                  <div id="interrupts-simulation">
-                      <h3 className="text-xl font-semibold text-foreground text-center mb-4">Interactive Simulation: Approve/Reject</h3>
-                      <InterruptsSimulator />
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div className="space-y-4">
+                        <h3 className="text-xl font-semibold">How it works in code</h3>
+                        <p className="text-sm text-muted-foreground">
+                            You can set up "Middleware" that monitors tool calls and pauses the agent if a sensitive tool (like writing a file or executing SQL) is about to run.
+                        </p>
+                        <CodeBlock code={hitlCode} />
+                    </div>
+                    <div id="interrupts-simulation" className="space-y-4">
+                        <h3 className="text-xl font-semibold text-foreground text-center">Live Approval Simulator</h3>
+                        <InterruptsSimulator />
+                    </div>
                   </div>
               </div>
             </Section>
@@ -590,11 +621,10 @@ checkpointer = RedisSaver.from_conn_string("redis://...")`} />
               <ul className="list-disc list-inside space-y-3">
                 <li><a href="https://docs.langchain.com/oss/python/langgraph/overview" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Official LangGraph Overview</a></li>
                 <li><a href="https://docs.langchain.com/oss/python/langchain/overview" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Official LangChain Overview</a></li>
-                <li><a href="https://docs.langchain.com/oss/python/langgraph/quickstart" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Quickstart Guide</a></li>
-                <li><a href="https://docs.langchain.com/oss/python/langgraph/persistence" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Persistence & Memory Docs</a></li>
-                <li><a href="https://docs.langchain.com/oss/python/langgraph/interrupts" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Human-in-the-loop Guide</a></li>
-                <li><a href="https://docs.langchain.com/oss/python/langgraph/streaming" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Streaming Guide</a></li>
-                <li><a href="https://docs.langchain.com/oss/python/langgraph/use-time-travel" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Time Travel API</a></li>
+                <li><a href="https://docs.langgraph.com/quickstart" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Quickstart Guide</a></li>
+                <li><a href="https://docs.langgraph.com/concepts/persistence" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Persistence & Memory Docs</a></li>
+                <li><a href="https://docs.langgraph.com/how-tos/human-in-the-loop" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Human-in-the-loop Guide</a></li>
+                <li><a href="https://docs.langgraph.com/how-tos/streaming" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-medium">Streaming Guide</a></li>
               </ul>
             </Section>
 

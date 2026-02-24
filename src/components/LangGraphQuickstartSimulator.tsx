@@ -58,7 +58,7 @@ const steps = [
     { name: 'The Invoke', highlight: { start: 37, end: 39 }, explanation: 'We call .invoke() to start the engine. The graph begins running from START.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { start: true }, state: { messages: [{ role: 'user', content: 'What is 3 + 4?' }], llm_calls: 0 }, trace: [{ content: 'Engine started with user query.' }] },
     { name: 'AI Thinking', highlight: { start: 12, end: 14 }, explanation: 'The "agent" node runs. The AI realizes it needs to call the calculator tool.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { agent: true, start_edge: true }, state: { messages: [{ role: 'user', content: 'What is 3 + 4?' }], llm_calls: 1 }, trace: [{ content: 'AI: Decided to use "calculator" tool.' }] },
     { name: 'Tool Run', highlight: { start: 16, end: 18 }, explanation: 'The "tools" node executes. It calculates 3 + 4 = 7 and updates the state.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { tools: true, decision_edge: true }, state: { messages: [{ role: 'user', content: 'What is 3 + 4?' }, { role: 'tool', content: '7' }], llm_calls: 1 }, trace: [{ content: 'Tool: Result is 7.' }] },
-    { name: 'Finish', highlight: { start: 27, end: 31 }, explanation: 'The agent sees the result, provides the final answer, and moves to END.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { end: true, agent: true, loop_edge: true }, state: { messages: [{ role: 'user', content: 'What is 3 + 4?' }, { role: 'ai', content: 'The sum is 7.' }], llm_calls: 2 }, trace: [{ content: 'AI: The sum is 7. Task complete.' }] },
+    { name: 'Finish', highlight: { start: 37, end: 40 }, explanation: 'The agent sees the result, provides the final answer, and moves to END.', graph: { start: true, agent: true, tools: true, start_edge: true, decision_edge: true, loop_edge: true }, execution: { end: true, agent: true, loop_edge: true }, state: { messages: [{ role: 'user', content: 'What is 3 + 4?' }, { role: 'ai', content: 'The sum is 7.' }], llm_calls: 2 }, trace: [{ content: 'AI: The sum is 7. Task complete.' }] },
 ];
 
 const CANVAS_W = 500;
@@ -110,7 +110,7 @@ export const LangGraphQuickstartSimulator = () => {
         <Card className="bg-muted/30 border-2 border-primary/10 overflow-hidden shadow-inner">
             <CardHeader className="text-center bg-primary/5 pb-6 border-b">
                  <CardTitle className="text-2xl font-bold flex items-center justify-center gap-2">
-                    <Sparkles className="text-primary"/> Graph API Simulation
+                    <Sparkles className="text-primary"/> Graph Walkthrough
                  </CardTitle>
                  <CardDescription className="text-lg max-w-2xl mx-auto mt-2 h-16 flex items-center justify-center text-foreground font-medium">
                    {currentStepData.explanation}
@@ -152,30 +152,30 @@ export const LangGraphQuickstartSimulator = () => {
 
                                 <g className="text-muted-foreground/40">
                                     {/* START -> AGENT */}
-                                    <motion.path 
-                                        d={`M 125 150 L 205 150`} 
-                                        fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
+                                    <motion.line 
+                                        x1="125" y1="150" x2="200" y2="150" 
+                                        stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.start_edge ? 1 : 0.2, stroke: currentStepData.execution.start_edge ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
                                     
-                                    {/* AGENT -> TOOLS (Downward) */}
-                                    <motion.path 
-                                        d={`M 240 175 Q 240 210 240 225`} 
-                                        fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
+                                    {/* AGENT -> TOOLS (Down) */}
+                                    <motion.line 
+                                        x1="240" y1="175" x2="240" y2="220" 
+                                        stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.decision_edge ? 1 : 0.2, stroke: currentStepData.execution.tools ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
                                     
-                                    {/* TOOLS -> AGENT (Upward Return) */}
-                                    <motion.path 
-                                        d={`M 260 225 Q 260 210 260 175`} 
-                                        fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
+                                    {/* TOOLS -> AGENT (Up) */}
+                                    <motion.line 
+                                        x1="260" y1="225" x2="260" y2="180" 
+                                        stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.loop_edge ? 1 : 0.2, stroke: currentStepData.execution.loop_edge ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
                                     
                                     {/* AGENT -> END */}
-                                    <motion.path 
-                                        d={`M 295 150 L 375 150`} 
-                                        fill="none" stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
+                                    <motion.line 
+                                        x1="295" y1="150" x2="370" y2="150" 
+                                        stroke="currentColor" strokeWidth="1.5" markerEnd="url(#arrowhead)" 
                                         animate={{ opacity: currentStepData.graph.decision_edge ? 1 : 0.2, stroke: currentStepData.execution.end ? 'hsl(var(--primary))' : 'currentColor' }} 
                                     />
                                 </g>
