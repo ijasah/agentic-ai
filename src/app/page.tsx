@@ -98,7 +98,6 @@ const sections = [
     icon: <Rocket className="h-8 w-8 text-primary" />,
     subsections: [
         { id: 'qs-graph-simulation', title: 'Building the Graph' },
-        { id: 'qs-functional-api', title: 'The Functional Way' },
     ]
   },
     { 
@@ -402,40 +401,12 @@ result = agent.invoke("What is 15 * 4?")`} />
             <Section id="langgraph-quickstart" title="LangGraph Quickstart" icon={<Rocket className="h-8 w-8 text-primary" />}>
               <div className="space-y-6">
                 <p className="text-muted-foreground text-lg">
-                    There are two main ways to build an agent: drawing a **Graph** (best for complex flows) or using the **Functional API** (best for simple, linear steps). 
+                    The best way to build a reliable agent is by drawing a **Graph**. This gives you full control over how data flows and how the AI interacts with tools.
                 </p>
 
                 <div id="qs-graph-simulation">
                     <LangGraphQuickstartSimulator />
                 </div>
-                <div id="qs-functional-api">
-                    <Accordion type="single" collapsible className="w-full mt-6">
-                        <AccordionItem value="item-1">
-                            <AccordionTrigger className="text-lg font-semibold">Option 2: Simple Python (Functional API)</AccordionTrigger>
-                            <AccordionContent>
-                                <p className="text-sm text-muted-foreground mb-4">If your agent just does one or two steps in a row, you can use the Functional API which looks like standard Python code.</p>
-                                <CodeBlock code={`# Simple Functional Agent
-from langgraph.functional import task, entrypoint
-
-@task
-def call_model(messages):
-    return model.invoke(messages)
-
-@entrypoint
-def my_agent(messages):
-    # Just one simple step
-    response = call_model(messages).result()
-    return response
-
-# Run it
-for chunk in my_agent.stream("Hello!"):
-    print(chunk)`}
-                                />
-                            </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-                </div>
-
               </div>
             </Section>
 

@@ -1,14 +1,13 @@
-
-"use client";
+'use client';
 
 import { cn } from '@/lib/utils';
-import { Bot, BrainCircuit, Users, GitBranch, ChevronRight, Rocket, Workflow, Save, Radio, UserCheck, ToyBrick, BookCopy, ShieldCheck } from 'lucide-react';
+import { Bot, BrainCircuit, Users, GitBranch, ChevronRight, Rocket, Workflow, Save, Radio, UserCheck, ToyBrick, BookCopy } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const sections = [
   { 
     id: 'introduction', 
-    title: 'LLM Agents: An Overview', 
+    title: 'AI Agents Overview', 
     icon: <Bot className="w-4 h-4" />,
     subsections: [
         { id: 'core-components', title: 'Core Components' },
@@ -35,7 +34,7 @@ const sections = [
   },
   {
     id: 'langgraph-overview',
-    title: 'LangGraph Overview',
+    title: 'LangGraph Introduction',
     icon: <GitBranch className="w-4 h-4" />,
     subsections: [
         { id: 'lg-key-concepts', title: 'The 3 Big Ideas' },
@@ -45,7 +44,7 @@ const sections = [
   },
   {
     id: 'thinking-in-langgraph',
-    title: 'How to Build an Agent',
+    title: 'Building an Agent',
     icon: <Workflow className="w-4 h-4" />,
   },
   {
@@ -54,7 +53,6 @@ const sections = [
     icon: <Rocket className="w-4 h-4" />,
     subsections: [
         { id: 'qs-graph-simulation', title: 'Graph Simulation' },
-        { id: 'qs-functional-api', title: 'Functional API' },
     ]
   },
   { 
